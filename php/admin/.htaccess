@@ -1,0 +1,9 @@
+RewriteEngine On
+RewriteBase /Ql_NhaThuoc/php/admin/
+
+# Nếu không phải file hoặc thư mục thực
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Rewrite tất cả về index.php
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]

@@ -1,0 +1,19 @@
+RewriteEngine On
+
+# API Router - /api.php/thuoc -> api.php với PATH_INFO
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^api\.php/(.*)$ api.php/$1 [QSA,L]
+
+# API Router - URL đẹp: /api/thuoc -> api.php/thuoc
+RewriteRule ^api/(.*)$ api.php/$1 [QSA,L]
+
+# Chuyển tất cả request đến index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+
+# Bảo vệ thư mục
+RewriteRule ^app/ - [F,L]
+RewriteRule ^core/ - [F,L]
+RewriteRule ^config/ - [F,L]

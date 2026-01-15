@@ -1,0 +1,68 @@
+version: '3.8'
+
+services:
+  # PHP Apache
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nhathuoc_app
+    ports:
+      - "8080:80"
+    volumes:
+      - ./php:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DOCKER_ENV=true
+      - DB_HOST=db
+      - DB_NAME=ql_nhathuoc_api
+      - DB_USER=root
+      - DB_PASS=root123
+    networks:
+      - nhathuoc_network
+
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: nhathuoc_db
+    restart: always
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: ql_nhathuoc_api
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/ql_nhathuoc_api.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./database/create_test_user.sql:/docker-entrypoint-initdb.d/02-testuser.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - nhathuoc_network
+
+  # phpMyAdmin
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: nhathuoc_phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root123
+    depends_on:
+      - db
+    networks:
+      - nhathuoc_network
+
+networks:
+  nhathuoc_network:
+    driver: bridge
+
+volumes:
+  db_data:

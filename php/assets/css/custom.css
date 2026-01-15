@@ -1,0 +1,754 @@
+/* Custom CSS - Nhà Thuốc Thanh Hoàn */
+
+/* Header */
+.header-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: #fff;
+}
+
+.header-spacer {
+    height: 180px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.logo-text {
+    font-size: 1.5rem;
+}
+
+/* Hero Slider */
+.hero-slider-full .carousel-item {
+    min-height: 400px;
+}
+
+.hero-slide-full {
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+}
+
+.min-vh-50 {
+    min-height: 400px;
+}
+
+/* Product Card */
+.product-card {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    overflow: hidden;
+    height: 100%;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+.product-card.product-unavailable {
+    opacity: 0.7;
+}
+
+.product-image {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    padding: 10px;
+}
+
+.product-image img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+}
+
+.product-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.7em;
+}
+
+.product-price .price-new {
+    font-size: 1.1rem;
+}
+
+.product-price .price-old {
+    font-size: 0.85rem;
+}
+
+.product-actions .btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+}
+
+/* Section Headers */
+.section-title-main {
+    font-size: 1.5rem;
+    position: relative;
+    display: inline-block;
+}
+
+.title-divider {
+    width: 80px;
+    height: 3px;
+    background: linear-gradient(90deg, #0d6efd, #1a8ccc);
+    margin: 10px auto 0;
+    border-radius: 2px;
+}
+
+/* Footer */
+.main-footer {
+    margin-top: 50px;
+}
+
+.footer-links li {
+    margin-bottom: 8px;
+}
+
+.footer-links a {
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.footer-links a:hover {
+    color: #0d6efd !important;
+}
+
+/* Back to Top */
+.back-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #0d6efd;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+    z-index: 999;
+}
+
+.back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.back-to-top:hover {
+    background: #0b5ed7;
+}
+
+/* Floating Buttons - Modern Style with Click Toggle */
+.floating-buttons-wrapper {
+    position: fixed;
+    bottom: 30px;
+    right: 25px;
+    z-index: 998;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Nút chính */
+.float-btn-main {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0d6efd, #0056b3);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.4);
+    transition: all 0.3s ease;
+    font-size: 22px;
+    border: none;
+    outline: none;
+    position: relative;
+}
+
+.float-btn-main:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(13, 110, 253, 0.5);
+}
+
+.float-btn-main.active {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    transform: rotate(180deg);
+}
+
+/* Container các nút con */
+.floating-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.floating-buttons.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Từng nút con */
+.float-btn {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-decoration: none;
+    position: relative;
+    transition: all 0.3s ease;
+    font-size: 18px;
+    transform: scale(0);
+}
+
+.floating-buttons.show .float-btn {
+    transform: scale(1);
+}
+
+/* Delay animation cho từng nút */
+.floating-buttons.show .float-btn:nth-child(1) { transition-delay: 0s; }
+.floating-buttons.show .float-btn:nth-child(2) { transition-delay: 0.05s; }
+.floating-buttons.show .float-btn:nth-child(3) { transition-delay: 0.1s; }
+
+/* Màu sắc */
+.float-btn.zalo { 
+    background: linear-gradient(135deg, #0068ff, #0052cc);
+    box-shadow: 0 4px 15px rgba(0, 104, 255, 0.4);
+}
+.float-btn.cart { 
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+}
+.float-btn.phone { 
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4);
+    animation: phone-ring 2s ease-in-out infinite;
+}
+
+.float-btn:hover {
+    transform: scale(1.15) !important;
+    color: #fff;
+}
+
+.float-btn.zalo:hover { box-shadow: 0 6px 25px rgba(0, 104, 255, 0.6); }
+.float-btn.cart:hover { box-shadow: 0 6px 25px rgba(40, 167, 69, 0.6); }
+.float-btn.phone:hover { 
+    box-shadow: 0 6px 25px rgba(220, 53, 69, 0.6);
+    animation: none;
+}
+
+/* Label tooltip */
+.float-label {
+    position: absolute;
+    right: 60px;
+    background: #333;
+    color: #fff;
+    padding: 8px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(10px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.float-label::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 6px solid transparent;
+    border-left-color: #333;
+}
+
+.float-btn:hover .float-label {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+/* Animation điện thoại rung */
+@keyframes phone-ring {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    10% { transform: scale(1) rotate(-15deg); }
+    20% { transform: scale(1) rotate(15deg); }
+    30% { transform: scale(1) rotate(-15deg); }
+    40% { transform: scale(1) rotate(15deg); }
+    50% { transform: scale(1) rotate(0deg); }
+}
+
+/* Pulse effect cho nút chính */
+.float-btn-main::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: inherit;
+    animation: pulse-ring 2s ease-out infinite;
+    z-index: -1;
+}
+
+.float-btn-main.active::before {
+    animation: none;
+}
+
+@keyframes pulse-ring {
+    0% { transform: scale(1); opacity: 0.5; }
+    100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .floating-buttons-wrapper {
+        bottom: 20px;
+        right: 15px;
+    }
+    
+    .float-btn-main {
+        width: 50px;
+        height: 50px;
+        font-size: 18px;
+    }
+    
+    .float-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 16px;
+    }
+    
+    .float-label {
+        display: none;
+    }
+}
+
+/* Cart Badge Animation */
+.cart-badge-animate {
+    animation: pulse 0.3s ease;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+}
+
+/* Cart Item */
+.cart-item:hover {
+    background: #f8f9fa;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-spacer {
+        height: 200px;
+    }
+    
+    .hero-slide-full,
+    .min-vh-50 {
+        min-height: 300px;
+    }
+    
+    .product-image {
+        height: 150px;
+    }
+    
+    .floating-buttons-wrapper {
+        bottom: 80px;
+        right: 10px;
+    }
+}
+
+
+/* Health Articles - Góc sức khỏe */
+.health-featured-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.health-featured-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15) !important;
+}
+
+.health-featured-card .card-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.health-article-item {
+    padding: 12px;
+    background: #fff;
+    border-radius: 10px;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.health-article-item:hover {
+    background: #f8f9fa;
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.health-article-item h6 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.3s;
+}
+
+.health-article-item:hover h6 {
+    color: #0d6efd !important;
+}
+
+.health-article-thumb img {
+    transition: transform 0.3s;
+}
+
+.health-article-item:hover .health-article-thumb img {
+    transform: scale(1.1);
+}
+
+
+/* Cart Button in Header */
+.cart-btn-new {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #28a745;
+    color: #fff !important;
+    padding: 10px 18px;
+    border-radius: 25px;
+    text-decoration: none !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.cart-btn-new:hover {
+    background: #218838;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+    color: #fff !important;
+}
+
+.cart-badge-new {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #fff !important;
+    color: #e53935 !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    min-width: 28px !important;
+    height: 28px !important;
+    padding: 0 8px !important;
+    border-radius: 14px !important;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3) !important;
+    line-height: 1 !important;
+}
+
+/* Notification Badge */
+.notification-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #dc3545;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: bold;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Notification Dropdown */
+.notification-dropdown {
+    padding: 0;
+    border: none;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+    border-radius: 10px;
+}
+
+.notification-item {
+    display: block;
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+    text-decoration: none;
+    color: #333;
+    transition: background 0.2s;
+}
+
+.notification-item:hover {
+    background: #f8f9fa;
+    color: #333;
+}
+
+.notification-item.unread {
+    background: #e7f3ff;
+}
+
+.notification-item .notif-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+}
+
+.notification-item .notif-content {
+    font-size: 0.8rem;
+    color: #666;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.notification-item .notif-time {
+    font-size: 0.7rem;
+    color: #999;
+    margin-top: 5px;
+}
+
+/* Navigation Styles */
+.nav-menu-new {
+    display: flex;
+    gap: 5px;
+}
+
+.nav-item-new {
+    position: relative;
+}
+
+.nav-link-new {
+    display: block;
+    padding: 12px 15px;
+    color: #fff !important;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: background 0.3s;
+    border-radius: 5px;
+}
+
+.nav-link-new:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+/* Nav Dropdown */
+.nav-dropdown {
+    position: relative;
+}
+
+.nav-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    min-width: 220px;
+    border-radius: 8px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s;
+    z-index: 1000;
+    padding: 8px 0;
+}
+
+.nav-dropdown:hover .nav-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.nav-dropdown-menu a {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.nav-dropdown-menu a:hover {
+    background: #f0f7ff;
+    color: #0d6efd;
+    padding-left: 20px;
+}
+
+.nav-dropdown-menu .brand-icon {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    margin-right: 10px;
+    border-radius: 4px;
+}
+
+.nav-dropdown-menu .brand-icon-placeholder {
+    width: 24px;
+    margin-right: 10px;
+    color: #999;
+}
+
+.nav-dropdown-menu .view-all-brands {
+    border-top: 1px solid #eee;
+    margin-top: 5px;
+    padding-top: 10px;
+    color: #0d6efd;
+    font-weight: 600;
+}
+
+/* Category Button */
+.category-btn-new {
+    background: #e9ecef;
+    color: #000 !important;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.category-btn-new:hover {
+    background: #ced4da;
+    color: #000 !important;
+}
+
+/* Category Links */
+.category-link-new {
+    display: inline-block;
+    padding: 8px 12px;
+    color: #333 !important;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border-radius: 5px;
+    transition: all 0.2s;
+}
+
+.category-link-new:hover {
+    background: #e7f3ff;
+    color: #0d6efd !important;
+}
+
+/* Category Dropdown */
+.cat-dropdown {
+    position: relative;
+}
+
+.cat-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    min-width: 200px;
+    border-radius: 8px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s;
+    z-index: 1000;
+    padding: 8px 0;
+}
+
+.cat-dropdown-menu-right {
+    left: auto;
+    right: 0;
+}
+
+.cat-dropdown:hover .cat-dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.cat-dropdown-menu a {
+    display: block;
+    padding: 8px 15px;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+}
+
+.cat-dropdown-menu a:hover {
+    background: #f0f7ff;
+    color: #0d6efd;
+}
+
+.cat-dropdown-menu .view-all {
+    border-top: 1px solid #eee;
+    margin-top: 5px;
+    padding-top: 10px;
+    color: #0d6efd;
+    font-weight: 600;
+}
+
+/* Mega Menu */
+.mega-menu-new {
+    width: 800px;
+    padding: 0;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+}
+
+/* Header Scroll Effect */
+/* Chỉ ẩn phần logo + search khi cuộn */
+.header-scrolled .main-header {
+    display: none !important;
+    height: 0 !important;
+    overflow: hidden;
+}
+
+/* Giữ lại top-bar, primary-nav, secondary-nav */
+.header-scrolled .secondary-nav {
+    box-shadow: 0 2px 15px rgba(0,0,0,0.15);
+}
+
+.main-header-hidden {
+    display: none !important;
+    height: 0 !important;
+}
