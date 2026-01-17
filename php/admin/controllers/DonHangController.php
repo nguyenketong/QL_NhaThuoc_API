@@ -5,6 +5,60 @@
 class DonHangController extends AdminController
 {
     /**
+     * Tạo thông báo cho user khi cập nhật trạng thái đơn hàng
+     */
+    private function taoThongBaoDonHang($maNguoiDung, $maDonHang, $trangThai)
+    {
+        $thongBao = $this->layNoiDungThongBao($maDonHang, $trangThai);
+        
+        $stmt = $this->db->prepare("
+            INSERT INTO thong_bao (MaNguoiDung, MaDonHang, TieuDe, NoiDung, LoaiThongBao, DaDoc, NgayTao, DuongDan)
+            VALUES (?, ?, ?, ?, 'DonHang', 0, NOW(), ?)
+        ");
+        $stmt->execute([
+            $maNguoiDung,
+            $maDonHang,
+            $thongBao['tieuDe'],
+            $thongBao['noiDung'],
+            "/don-hang/chi-tiet/$maDonHang"
+        ]);
+    }
+
+    /**
+     * Lấy nội dung thông báo theo trạng thái
+     */
+    private function layNoiDungThongBao($maDonHang, $trangThai)
+    {
+        $messages = [
+            'Cho xu ly' => [
+                'tieuDe' => "Đơn hàng #$maDonHang đang chờ xử lý",
+                'noiDung' => "Đơn hàng của bạn đã được tiếp nhận và đang chờ xử lý."
+            ],
+            'Dang giao' => [
+                'tieuDe' => "Đơn hàng #$maDonHang đang giao",
+                'noiDung' => "Đơn hàng của bạn đã được giao cho đơn vị vận chuyển. Vui lòng chú ý điện thoại!"
+            ],
+            'Hoan thanh' => [
+                'tieuDe' => "Đơn hàng #$maDonHang hoàn thành",
+                'noiDung' => "Đơn hàng đã giao thành công. Cảm ơn bạn đã mua hàng!"
+            ],
+            'Da huy' => [
+                'tieuDe' => "Đơn hàng #$maDonHang đã hủy",
+                'noiDung' => "Đơn hàng của bạn đã bị hủy. Vui lòng liên hệ hotline nếu cần hỗ trợ."
+            ],
+            'Xac nhan thanh toan' => [
+                'tieuDe' => "Đơn hàng #$maDonHang đã xác nhận thanh toán",
+                'noiDung' => "Chúng tôi đã nhận được tiền chuyển khoản của bạn. Đơn hàng sẽ sớm được xử lý!"
+            ]
+        ];
+
+        return $messages[$trangThai] ?? [
+            'tieuDe' => "Cập nhật đơn hàng #$maDonHang",
+            'noiDung' => "Đơn hàng của bạn đã được cập nhật trạng thái: $trangThai"
+        ];
+    }
+
+    /**
      * GET: Danh sách đơn hàng
      * API: GET /admin/?controller=don-hang&format=json
      */
@@ -149,7 +203,13 @@ class DonHangController extends AdminController
             }
         }
 
+        // Cập nhật trạng thái
         $this->db->prepare("UPDATE don_hang SET TrangThai = ? WHERE MaDonHang = ?")->execute([$trangThaiMoi, $id]);
+
+        // Tạo thông báo cho user
+        if ($trangThaiMoi != $trangThaiHienTai && $donHang['MaNguoiDung']) {
+            $this->taoThongBaoDonHang($donHang['MaNguoiDung'], $id, $trangThaiMoi);
+        }
 
         if ($this->isApi) {
             $this->show($id);
@@ -230,6 +290,12 @@ class DonHangController extends AdminController
             foreach ($stmt->fetchAll(PDO::FETCH_ASSOC) as $ct) {
                 $this->db->prepare("UPDATE thuoc SET SoLuongTon = COALESCE(SoLuongTon, 0) - ?, SoLuongDaBan = COALESCE(SoLuongDaBan, 0) + ? WHERE MaThuoc = ?")
                     ->execute([$ct['SoLuong'], $ct['SoLuong'], $ct['MaThuoc']]);
+            }
+
+            // Tạo thông báo xác nhận thanh toán
+            if ($donHang['MaNguoiDung']) {
+                $this->taoThongBaoDonHang($donHang['MaNguoiDung'], $id, 'Xac nhan thanh toan');
+                $this->taoThongBaoDonHang($donHang['MaNguoiDung'], $id, 'Dang giao');
             }
 
             $this->setFlash('success', 'Đã xác nhận thanh toán!');

@@ -57,7 +57,13 @@ class NguoiDungModel extends Model
 
     public function getById($id)
     {
-        $stmt = $this->db->prepare("SELECT MaNguoiDung, HoTen, SoDienThoai, Email, DiaChi, Avatar, VaiTro, NgayTao FROM nguoi_dung WHERE MaNguoiDung = ?");
+        $stmt = $this->db->prepare("
+            SELECT nd.MaNguoiDung, nd.HoTen, nd.SoDienThoai, nd.Email, nd.DiaChi, nd.Avatar, nd.VaiTro, nd.NgayTao,
+                   (SELECT COUNT(*) FROM don_hang WHERE MaNguoiDung = nd.MaNguoiDung) as so_don_hang,
+                   (SELECT COALESCE(SUM(TongTien), 0) FROM don_hang WHERE MaNguoiDung = nd.MaNguoiDung AND TrangThai = 'Hoan thanh') as tong_tien_da_mua
+            FROM nguoi_dung nd 
+            WHERE nd.MaNguoiDung = ?
+        ");
         $stmt->execute([$id]);
         return $stmt->fetch();
     }

@@ -79,7 +79,9 @@ function isLoggedIn() {
 }
 
 function isAdmin() {
-    return ($_SESSION['user_role'] ?? '') === 'Admin' || isset($_SESSION['admin_logged_in']);
+    // Chỉ là Admin nếu user_role = Admin VÀ không phải đang đăng nhập bằng user thường
+    $role = $_SESSION['user_role'] ?? '';
+    return $role === 'Admin';
 }
 
 function requireLogin() {
@@ -141,11 +143,15 @@ case 'auth':
         
         if (!$isValid) error('Mật khẩu không đúng', 401);
         
+        // Clear session cũ trước khi set mới
+        unset($_SESSION['admin_logged_in'], $_SESSION['admin_id'], $_SESSION['admin_name'], $_SESSION['admin_phone']);
+        
         // Set session
         $_SESSION['user_id'] = $user['MaNguoiDung'];
         $_SESSION['user_name'] = $user['HoTen'];
         $_SESSION['user_role'] = $user['VaiTro'] ?? 'User';
         setcookie('UserId', $user['MaNguoiDung'], time() + 30 * 24 * 3600, '/');
+        setcookie('AdminLoggedIn', '', time() - 3600, '/');
         
         unset($user['MatKhau']);
         json(['user' => $user, 'role' => $user['VaiTro'] ?? 'User'], 'Đăng nhập thành công');
@@ -533,11 +539,13 @@ case 'thuoc':
         if (empty($data['TenThuoc'])) error('TenThuoc là bắt buộc', 422);
         if (empty($data['GiaBan'])) error('GiaBan là bắt buộc', 422);
         
-        $stmt = $db->prepare("INSERT INTO thuoc (TenThuoc, MoTa, DonViTinh, GiaBan, GiaGoc, PhanTramGiam, SoLuongTon, MaNhomThuoc, MaThuongHieu, MaNuocSX, HinhAnh, IsActive, IsNew, IsHot, NgayTao) 
-                              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, NOW())");
+        $stmt = $db->prepare("INSERT INTO thuoc (TenThuoc, MoTa, DonViTinh, GiaBan, GiaGoc, PhanTramGiam, NgayBatDauKM, NgayKetThucKM, SoLuongTon, MaNhomThuoc, MaThuongHieu, MaNuocSX, HinhAnh, IsActive, IsNew, IsHot, NgayTao) 
+                              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?, ?, NOW())");
         $stmt->execute([
             $data['TenThuoc'], $data['MoTa'] ?? '', $data['DonViTinh'] ?? 'Hộp',
             $data['GiaBan'], $data['GiaGoc'] ?? null, $data['PhanTramGiam'] ?? 0,
+            !empty($data['NgayBatDauKM']) ? $data['NgayBatDauKM'] : null,
+            !empty($data['NgayKetThucKM']) ? $data['NgayKetThucKM'] : null,
             $data['SoLuongTon'] ?? 0, $data['MaNhomThuoc'] ?? null, $data['MaThuongHieu'] ?? null,
             $data['MaNuocSX'] ?? null, $data['HinhAnh'] ?? null, $data['IsNew'] ?? 0, $data['IsHot'] ?? 0
         ]);
@@ -558,6 +566,7 @@ case 'thuoc':
         $data = input();
         $stmt = $db->prepare("UPDATE thuoc SET 
             TenThuoc = ?, MoTa = ?, DonViTinh = ?, GiaBan = ?, GiaGoc = ?, PhanTramGiam = ?,
+            NgayBatDauKM = ?, NgayKetThucKM = ?,
             SoLuongTon = ?, MaNhomThuoc = ?, MaThuongHieu = ?, MaNuocSX = ?, HinhAnh = ?,
             IsActive = ?, IsNew = ?, IsHot = ?
             WHERE MaThuoc = ?");
@@ -565,6 +574,8 @@ case 'thuoc':
             $data['TenThuoc'] ?? $old['TenThuoc'], $data['MoTa'] ?? $old['MoTa'],
             $data['DonViTinh'] ?? $old['DonViTinh'], $data['GiaBan'] ?? $old['GiaBan'],
             $data['GiaGoc'] ?? $old['GiaGoc'], $data['PhanTramGiam'] ?? $old['PhanTramGiam'],
+            array_key_exists('NgayBatDauKM', $data) ? ($data['NgayBatDauKM'] ?: null) : $old['NgayBatDauKM'],
+            array_key_exists('NgayKetThucKM', $data) ? ($data['NgayKetThucKM'] ?: null) : $old['NgayKetThucKM'],
             $data['SoLuongTon'] ?? $old['SoLuongTon'], $data['MaNhomThuoc'] ?? $old['MaNhomThuoc'],
             $data['MaThuongHieu'] ?? $old['MaThuongHieu'], $data['MaNuocSX'] ?? $old['MaNuocSX'],
             $data['HinhAnh'] ?? $old['HinhAnh'], $data['IsActive'] ?? $old['IsActive'],
@@ -738,7 +749,16 @@ case 'nuoc-san-xuat':
 case 'home':
 case '':
     $thuocMoi = $db->query("SELECT * FROM thuoc WHERE IsActive = 1 AND IsNew = 1 ORDER BY NgayTao DESC LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
-    $thuocKM = $db->query("SELECT * FROM thuoc WHERE IsActive = 1 AND PhanTramGiam > 0 LIMIT 10")->fetchAll(PDO::FETCH_ASSOC);
+    
+    // Sản phẩm khuyến mãi: phải có PhanTramGiam > 0 VÀ ngày hiện tại nằm trong khoảng NgayBatDauKM - NgayKetThucKM
+    $now = date('Y-m-d H:i:s');
+    $stmtKM = $db->prepare("SELECT * FROM thuoc WHERE IsActive = 1 AND PhanTramGiam > 0 
+        AND (NgayBatDauKM IS NULL OR NgayBatDauKM <= ?) 
+        AND (NgayKetThucKM IS NULL OR NgayKetThucKM >= ?) 
+        ORDER BY PhanTramGiam DESC LIMIT 10");
+    $stmtKM->execute([$now, $now]);
+    $thuocKM = $stmtKM->fetchAll(PDO::FETCH_ASSOC);
+    
     $nhomThuoc = $db->query("SELECT * FROM nhom_thuoc ORDER BY TenNhomThuoc")->fetchAll(PDO::FETCH_ASSOC);
     json(['san_pham_moi' => $thuocMoi, 'san_pham_khuyen_mai' => $thuocKM, 'nhom_thuoc' => $nhomThuoc], 'Trang chủ API');
     break;

@@ -14,7 +14,26 @@ Website quản lý nhà thuốc với MVC, RESTful API, PHP, MySQL, Bootstrap.
 
 ## 🚀 Cách chạy
 
-### Option 1: XAMPP (Development)
+### Option 1: Docker (Recommended) ⭐
+
+```bash
+# Quick Start - Xem file QUICK_START.md
+start-docker.bat
+
+# Hoặc dùng lệnh
+docker-compose up -d --build
+
+# Truy cập
+Website:    http://localhost:8080/
+Login:      http://localhost:8080/user/phoneLogin
+Admin:      http://localhost:8080/admin/
+API:        http://localhost:8080/api.php
+phpMyAdmin: http://localhost:8081/
+```
+
+**🔐 Google Login**: Xem hướng dẫn chi tiết trong `GOOGLE_LOGIN_SETUP.md`
+
+### Option 2: XAMPP (Development)
 
 ```bash
 # 1. Copy thư mục vào htdocs
@@ -24,23 +43,13 @@ C:\xampp\htdocs\Ql_NhaThuoc\
 # Mở phpMyAdmin -> Import -> database/ql_nhathuoc_api.sql
 # Sau đó chạy: database/create_test_user.sql
 
-# 3. Truy cập
+# 3. Cấu hình Google Login (optional)
+# Xem file GOOGLE_LOGIN_SETUP.md
+
+# 4. Truy cập
 Website: http://localhost/Ql_NhaThuoc/php/
 Admin:   http://localhost/Ql_NhaThuoc/php/admin/
-API:     http://localhost/Ql_NhaThuoc/php/api/
-```
-
-### Option 2: Docker (Production)
-
-```bash
-# 1. Build và chạy
-docker-compose up -d
-
-# 2. Truy cập
-Website:    http://localhost:8080/
-Admin:      http://localhost:8080/admin/
-API:        http://localhost:8080/api/
-phpMyAdmin: http://localhost:8081/
+API:     http://localhost/Ql_NhaThuoc/php/api.php
 ```
 
 ---
@@ -131,7 +140,23 @@ Các controller hỗ trợ cả HTML và JSON response:
 
 ## 🔐 Authentication
 
-### Login để lấy token
+Hệ thống hỗ trợ **3 phương thức đăng nhập**:
+
+### 1. 🌐 Google OAuth (Recommended)
+- Đăng nhập nhanh bằng tài khoản Google
+- Tự động tạo tài khoản lần đầu
+- Xem hướng dẫn: `GOOGLE_LOGIN_SETUP.md`
+
+### 2. 📱 OTP qua SMS
+- Gửi mã OTP qua số điện thoại
+- Tích hợp eSMS API
+
+### 3. 🔑 Số điện thoại + Mật khẩu
+- Đăng nhập truyền thống
+
+### API Authentication
+
+#### Login để lấy token
 ```bash
 POST /api/auth/login
 Content-Type: application/json

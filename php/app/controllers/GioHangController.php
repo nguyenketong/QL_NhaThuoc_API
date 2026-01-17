@@ -133,12 +133,13 @@ class GioHangController extends Controller
 
     /**
      * Tính giá bán (có khuyến mãi)
+     * - Đang KM: tính giá giảm từ GiaGoc
+     * - Hết KM: trả về GiaGoc (giá gốc trước KM)
      */
     private function calculatePrice($thuoc)
     {
         $phanTramGiam = $thuoc['PhanTramGiam'] ?? 0;
         $giaGoc = $thuoc['GiaGoc'] ?? $thuoc['GiaBan'] ?? 0;
-        $giaBan = $thuoc['GiaBan'] ?? 0;
 
         if ($phanTramGiam > 0) {
             $now = date('Y-m-d H:i:s');
@@ -153,7 +154,8 @@ class GioHangController extends Controller
             }
         }
 
-        return $giaBan;
+        // Hết KM hoặc không có KM: trả về giá gốc
+        return $giaGoc;
     }
 
     // ==================== PUBLIC METHODS ====================

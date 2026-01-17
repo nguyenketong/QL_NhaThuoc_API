@@ -157,18 +157,21 @@ $thuongHieus = $db->query("SELECT * FROM thuong_hieu ORDER BY TenThuongHieu LIMI
                 <div class="d-flex align-items-center gap-3">
                     <?php if ($userId): ?>
                         <!-- Thông báo -->
-                        <div class="dropdown">
-                            <a href="#" class="text-white position-relative" data-bs-toggle="dropdown" id="notificationDropdown">
+                        <div class="dropdown notification-wrapper">
+                            <a href="#" class="text-white position-relative notification-bell" data-bs-toggle="dropdown" id="notificationDropdown" aria-expanded="false">
                                 <i class="fas fa-bell fa-lg"></i>
-                                <span class="notification-badge" id="notification-count" style="display:none;">0</span>
+                                <span class="notification-badge" id="notification-count">0</span>
                             </a>
-                            <div class="dropdown-menu dropdown-menu-end notification-dropdown" style="width: 350px; max-height: 400px; overflow-y: auto;">
-                                <div class="d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
-                                    <strong>Thông báo</strong>
-                                    <a href="#" onclick="danhDauTatCaDaDoc()" class="small text-primary">Đánh dấu đã đọc</a>
+                            <div class="dropdown-menu dropdown-menu-end notification-dropdown">
+                                <div class="notification-header">
+                                    <span class="notification-title">Thông báo</span>
+                                    <a href="#" onclick="danhDauTatCaDaDoc(); return false;" class="mark-all-read">Đánh dấu đã đọc</a>
                                 </div>
-                                <div id="notification-list">
-                                    <div class="text-center py-3 text-muted">Đang tải...</div>
+                                <div id="notification-list" class="notification-body">
+                                    <div class="notification-loading">
+                                        <i class="fas fa-spinner fa-spin"></i>
+                                        <span>Đang tải...</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -434,35 +437,79 @@ async function loadCartCount() {
     } catch(e) { console.error('Load cart error:', e); }
 }
 
-// Thông báo
+// Thông báo - Load danh sách và số lượng
 async function loadThongBao() {
     try {
+        // Load số lượng chưa đọc
         const countRes = await fetch('<?= BASE_URL ?>/thongBao/laySoLuongChuaDoc');
         const countData = await countRes.json();
         const badge = document.getElementById('notification-count');
-        if (countData.soLuong > 0) {
-            badge.textContent = countData.soLuong > 9 ? '9+' : countData.soLuong;
-            badge.style.display = 'block';
-        } else {
-            badge.style.display = 'none';
+        
+        if (badge) {
+            if (countData.soLuong > 0) {
+                badge.textContent = countData.soLuong > 99 ? '99+' : countData.soLuong;
+                badge.classList.add('has-notification');
+            } else {
+                badge.textContent = '0';
+                badge.classList.remove('has-notification');
+            }
         }
 
+        // Load danh sách thông báo
         const listRes = await fetch('<?= BASE_URL ?>/thongBao/layDanhSach');
         const listData = await listRes.json();
         const listEl = document.getElementById('notification-list');
         
+        if (!listEl) return;
+        
         if (listData.thongBaos && listData.thongBaos.length > 0) {
-            listEl.innerHTML = listData.thongBaos.map(tb => `
-                <a href="<?= BASE_URL ?>${tb.duongDan || '#'}" class="notification-item ${tb.daDoc ? '' : 'unread'}" onclick="danhDauDaDoc(${tb.maThongBao})">
-                    <div class="notif-title">${tb.tieuDe || 'Thông báo'}</div>
-                    <div class="notif-content">${tb.noiDung || ''}</div>
-                    <div class="notif-time"><i class="far fa-clock me-1"></i>${tb.ngayTao || ''}</div>
+            listEl.innerHTML = listData.thongBaos.map(tb => {
+                // Icon theo loại thông báo
+                let icon = 'fa-bell';
+                let iconColor = '#1a8ccc';
+                if (tb.loaiThongBao === 'DonHang') {
+                    if (tb.tieuDe.includes('đang giao')) { icon = 'fa-truck'; iconColor = '#17a2b8'; }
+                    else if (tb.tieuDe.includes('hoàn thành')) { icon = 'fa-check-circle'; iconColor = '#28a745'; }
+                    else if (tb.tieuDe.includes('hủy')) { icon = 'fa-times-circle'; iconColor = '#dc3545'; }
+                    else if (tb.tieuDe.includes('thanh toán')) { icon = 'fa-credit-card'; iconColor = '#6f42c1'; }
+                    else { icon = 'fa-box'; iconColor = '#fd7e14'; }
+                }
+                
+                return `
+                <a href="<?= BASE_URL ?>${tb.duongDan || '#'}" class="notification-item ${tb.daDoc ? 'read' : 'unread'}" onclick="danhDauDaDoc(${tb.maThongBao})">
+                    <div class="notification-icon" style="background: ${iconColor}20; color: ${iconColor};">
+                        <i class="fas ${icon}"></i>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">${tb.tieuDe || 'Thông báo'}</div>
+                        <div class="notification-text">${tb.noiDung || ''}</div>
+                        <div class="notification-time">
+                            <i class="far fa-clock"></i> ${tb.ngayTao || ''}
+                        </div>
+                    </div>
+                    ${!tb.daDoc ? '<span class="notification-dot"></span>' : ''}
                 </a>
-            `).join('');
+            `}).join('');
         } else {
-            listEl.innerHTML = '<div class="text-center py-4 text-muted"><i class="fas fa-bell-slash fa-2x mb-2"></i><br>Không có thông báo</div>';
+            listEl.innerHTML = `
+                <div class="notification-empty">
+                    <i class="fas fa-bell-slash"></i>
+                    <p>Không có thông báo mới</p>
+                </div>
+            `;
         }
-    } catch(e) { console.error('Load notification error:', e); }
+    } catch(e) { 
+        console.error('Load notification error:', e);
+        const listEl = document.getElementById('notification-list');
+        if (listEl) {
+            listEl.innerHTML = `
+                <div class="notification-empty">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Không thể tải thông báo</p>
+                </div>
+            `;
+        }
+    }
 }
 
 async function danhDauDaDoc(id) {

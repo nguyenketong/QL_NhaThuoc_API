@@ -16,8 +16,10 @@ $dangKhuyenMai = $phanTramGiam > 0
     && (empty($thuoc['NgayBatDauKM']) || $thuoc['NgayBatDauKM'] <= $now)
     && (empty($thuoc['NgayKetThucKM']) || $thuoc['NgayKetThucKM'] >= $now);
 
+// GiaGoc là giá gốc trước khuyến mãi, GiaBan là giá đang bán (có thể đã giảm)
 $giaGoc = $thuoc['GiaGoc'] ?? $thuoc['GiaBan'] ?? 0;
-$giaBan = $dangKhuyenMai ? ($giaGoc * (100 - $phanTramGiam) / 100) : ($thuoc['GiaBan'] ?? 0);
+// Nếu đang KM: tính giá giảm từ GiaGoc. Nếu hết KM: trả về GiaGoc (giá gốc trước KM)
+$giaBan = $dangKhuyenMai ? ($giaGoc * (100 - $phanTramGiam) / 100) : $giaGoc;
 ?>
 <div class="col-md-3 col-6">
     <div class="product-card position-relative <?= $khongTheMua ? 'product-unavailable' : '' ?>">
@@ -28,7 +30,7 @@ $giaBan = $dangKhuyenMai ? ($giaGoc * (100 - $phanTramGiam) / 100) : ($thuoc['Gi
             <?php elseif ($hetHang): ?>
                 <span class="badge bg-secondary">Hết hàng</span>
             <?php else: ?>
-                <?php if ($phanTramGiam > 0): ?>
+                <?php if ($dangKhuyenMai): ?>
                     <span class="badge bg-danger">-<?= $phanTramGiam ?>%</span>
                 <?php endif; ?>
                 <?php if ($isHot): ?>
@@ -59,7 +61,7 @@ $giaBan = $dangKhuyenMai ? ($giaGoc * (100 - $phanTramGiam) / 100) : ($thuoc['Gi
             </div>
             <div class="product-price my-2">
                 <span class="price-new text-danger fw-bold"><?= number_format($giaBan, 0, ',', '.') ?>đ</span>
-                <?php if ($phanTramGiam > 0 && $giaGoc > $giaBan): ?>
+                <?php if ($dangKhuyenMai && $giaGoc > $giaBan): ?>
                     <span class="price-old text-muted text-decoration-line-through ms-2"><?= number_format($giaGoc, 0, ',', '.') ?>đ</span>
                 <?php endif; ?>
             </div>

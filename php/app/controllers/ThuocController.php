@@ -246,18 +246,15 @@ class ThuocController extends Controller
 
     public function khuyenMai()
     {
-        $allThuoc = $this->thuocModel->getAll(['IsActive' => 1], 100, 0);
-        
-        $danhSach = array_filter($allThuoc, function($t) {
-            return !empty($t['PhanTramGiam']) && $t['PhanTramGiam'] > 0;
-        });
+        // Sử dụng method getSanPhamKhuyenMai đã có logic check ngày đúng
+        $danhSach = $this->thuocModel->getSanPhamKhuyenMai(100);
         
         $nhomThuocs = $this->nhomThuocModel ? $this->nhomThuocModel->getAll([], 100, 0) : [];
         $thuongHieus = $this->thuongHieuModel ? $this->thuongHieuModel->getAll([], 100, 0) : [];
         
         $data = [
             'title' => 'Sản phẩm khuyến mãi - ' . STORE_NAME,
-            'danhSachThuoc' => array_values($danhSach),
+            'danhSachThuoc' => $danhSach,
             'nhomThuocs' => $nhomThuocs,
             'thuongHieus' => $thuongHieus,
             'isKhuyenMai' => true

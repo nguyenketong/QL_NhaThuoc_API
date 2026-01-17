@@ -43,13 +43,15 @@ define('BANK_ACCOUNT_NAME', 'NGUYEN KE TONG');
 define('BANK_TEMPLATE', 'compact2');
 
 // Google OAuth 2.0
+// Thay YOUR_GOOGLE_CLIENT_ID và YOUR_GOOGLE_CLIENT_SECRET bằng credentials thật từ Google Console
+// Redirect URI cho Docker: http://localhost:8080/user/googleCallback
 define('GOOGLE_CLIENT_ID', 'YOUR_GOOGLE_CLIENT_ID');
 define('GOOGLE_CLIENT_SECRET', 'YOUR_GOOGLE_CLIENT_SECRET');
 define('GOOGLE_REDIRECT_URI', BASE_URL . '/user/googleCallback');
 
 // eSMS API - Đăng ký tại https://esms.vn
-define('ESMS_API_KEY', '1FF178AEFB29AD2C0B61FA1197E244');
-define('ESMS_SECRET_KEY', 'C3A8D07128D23B50EBE8D116CC4859');
+define('ESMS_API_KEY', 'YOUR_ESMS_API_KEY');
+define('ESMS_SECRET_KEY', 'YOUR_ESMS_SECRET_KEY');
 define('ESMS_BASE_URL', 'http://rest.esms.vn/MainService.svc/json');
 define('ESMS_BRAND_NAME', '');
 

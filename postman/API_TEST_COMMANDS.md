@@ -1,541 +1,301 @@
-# API Test Commands - Nhà Thuốc Tây Thanh Hoàn
+# 📋 Hướng dẫn Test API - Nhà Thuốc Thanh Hoàn
 
-## Base URL
-- **XAMPP**: `http://localhost/Ql_NhaThuoc/php/api.php`
-- **Docker**: `http://localhost:8080/api.php`
+## 🔧 Cài đặt Postman
+
+1. Import Collection: `NhaThuoc_API.postman_collection.json`
+2. Import Environment: 
+   - Docker: `NhaThuoc_Docker.postman_environment.json`
+   - XAMPP: `NhaThuoc_XAMPP.postman_environment.json`
+3. Chọn Environment phù hợp
+
+## 🔑 Tài khoản Test
+
+| Vai trò | Số điện thoại | Mật khẩu |
+|---------|---------------|----------|
+| Admin | 0795930020 | admin123 |
+| User | 0123456789 | 123456 |
 
 ---
 
-## 1. AUTHENTICATION (Xác thực)
+## 🔐 AUTH - Xác thực
 
-### POST - Đăng nhập User
-```
-POST {{base_url}}/auth/login
-Content-Type: application/json
-
-{
-    "phone": "0939857557",
-    "password": "123456"
-}
+### Đăng nhập Admin
+```bash
+curl -X POST http://localhost:8080/api.php/auth/admin-login \
+  -H "Content-Type: application/json" \
+  -d '{"phone": "0795930020", "password": "admin123"}'
 ```
 
-### POST - Đăng ký User
-```
-POST {{base_url}}/auth/register
-Content-Type: application/json
-
-{
-    "name": "Nguyễn Văn Test",
-    "phone": "0912345678",
-    "password": "123456"
-}
+### Đăng nhập User
+```bash
+curl -X POST http://localhost:8080/api.php/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"phone": "0123456789", "password": "123456"}'
 ```
 
-### POST - Đăng nhập Admin
-```
-POST {{base_url}}/auth/admin-login
-Content-Type: application/json
-
-{
-    "phone": "0795930020",
-    "password": "admin123"
-}
+### Đăng ký User mới
+```bash
+curl -X POST http://localhost:8080/api.php/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Nguyen Van Test", "phone": "0987654321", "password": "123456"}'
 ```
 
-### POST - Gửi OTP
-```
-POST {{base_url}}/auth/send-otp
-Content-Type: application/json
-
-{
-    "phone": "0939857557"
-}
+### Thông tin tài khoản
+```bash
+curl http://localhost:8080/api.php/auth/me
 ```
 
-### POST - Xác nhận OTP
-```
-POST {{base_url}}/auth/verify-otp
-Content-Type: application/json
-
-{
-    "phone": "0939857557",
-    "otp": "123456"
-}
-```
-
-### POST - Đăng xuất
-```
-POST {{base_url}}/auth/logout
-```
-
-### GET - Thông tin User hiện tại
-```
-GET {{base_url}}/auth/me
+### Đăng xuất
+```bash
+curl -X POST http://localhost:8080/api.php/auth/logout
 ```
 
 ---
 
-## 2. THUỐC (Products)
+## 💊 THUỐC
 
-### GET - Danh sách thuốc
-```
-GET {{base_url}}/thuoc
-GET {{base_url}}/thuoc?page=1&limit=10
-GET {{base_url}}/thuoc?search=paracetamol
-GET {{base_url}}/thuoc?nhom=1
-```
-
-### GET - Chi tiết thuốc
-```
-GET {{base_url}}/thuoc/10
+### Danh sách (Public)
+```bash
+curl http://localhost:8080/api.php/thuoc
+curl http://localhost:8080/api.php/thuoc?page=1&limit=5
+curl http://localhost:8080/api.php/thuoc?search=para
+curl http://localhost:8080/api.php/thuoc?nhom=1
 ```
 
-### POST - Tạo thuốc mới (Admin)
+### Chi tiết (Public)
+```bash
+curl http://localhost:8080/api.php/thuoc/1
 ```
-POST {{base_url}}/thuoc
-Content-Type: application/json
 
-{
+### Tạo mới (Admin)
+```bash
+curl -X POST http://localhost:8080/api.php/thuoc \
+  -H "Content-Type: application/json" \
+  -d '{
     "TenThuoc": "Thuốc Test API",
     "MoTa": "Mô tả thuốc test",
+    "DonViTinh": "Hộp",
     "GiaBan": 50000,
     "GiaGoc": 60000,
-    "PhanTramGiam": 15,
-    "DonViTinh": "Hộp",
-    "MaNhomThuoc": 1,
-    "MaThuongHieu": 1,
-    "MaNuocSX": 1,
+    "PhanTramGiam": 20,
+    "NgayBatDauKM": "2024-01-01",
+    "NgayKetThucKM": "2024-12-31",
     "SoLuongTon": 100,
-    "IsHot": 1,
-    "IsNew": 1
-}
+    "MaNhomThuoc": 1,
+    "IsNew": 1,
+    "IsHot": 0
+  }'
 ```
 
-### PUT - Cập nhật thuốc (Admin)
-```
-PUT {{base_url}}/thuoc/10
-Content-Type: application/json
-
-{
-    "TenThuoc": "Smecta - Đã cập nhật",
-    "GiaBan": 70000,
-    "PhanTramGiam": 10
-}
-```
-
-### DELETE - Xóa thuốc (Admin)
-```
-DELETE {{base_url}}/thuoc/10
+### Cập nhật (Admin)
+```bash
+curl -X PUT http://localhost:8080/api.php/thuoc/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "TenThuoc": "Thuốc Đã Cập Nhật",
+    "GiaBan": 55000,
+    "PhanTramGiam": 25,
+    "NgayKetThucKM": "2024-06-30"
+  }'
 ```
 
----
-
-## 3. NHÓM THUỐC (Categories)
-
-### GET - Danh sách nhóm thuốc
-```
-GET {{base_url}}/nhom-thuoc
+### Xóa khuyến mãi (Admin)
+```bash
+curl -X PUT http://localhost:8080/api.php/thuoc/1 \
+  -H "Content-Type: application/json" \
+  -d '{"PhanTramGiam": 0, "NgayBatDauKM": null, "NgayKetThucKM": null}'
 ```
 
-### GET - Chi tiết nhóm thuốc
-```
-GET {{base_url}}/nhom-thuoc/1
-```
-
-### POST - Tạo nhóm thuốc
-```
-POST {{base_url}}/nhom-thuoc
-Content-Type: application/json
-
-{
-    "TenNhomThuoc": "Nhóm thuốc test",
-    "MoTa": "Mô tả nhóm thuốc test",
-    "MaDanhMucCha": null
-}
-```
-
-### PUT - Cập nhật nhóm thuốc
-```
-PUT {{base_url}}/nhom-thuoc/1
-Content-Type: application/json
-
-{
-    "TenNhomThuoc": "Thuốc giảm đau - Updated",
-    "MoTa": "Mô tả đã cập nhật"
-}
-```
-
-### DELETE - Xóa nhóm thuốc
-```
-DELETE {{base_url}}/nhom-thuoc/10
+### Xóa thuốc (Admin - soft delete)
+```bash
+curl -X DELETE http://localhost:8080/api.php/thuoc/99
 ```
 
 ---
 
-## 4. THƯƠNG HIỆU (Brands)
+## 🛒 ĐƠN HÀNG
 
-### GET - Danh sách thương hiệu
-```
-GET {{base_url}}/thuong-hieu
-```
-
-### GET - Chi tiết thương hiệu
-```
-GET {{base_url}}/thuong-hieu/1
+### User - Xem đơn hàng của mình
+```bash
+curl http://localhost:8080/api.php/don-hang
+curl http://localhost:8080/api.php/don-hang/1
 ```
 
-### POST - Tạo thương hiệu
-```
-POST {{base_url}}/thuong-hieu
-Content-Type: application/json
-
-{
-    "TenThuongHieu": "Thương hiệu Test",
-    "QuocGia": "Việt Nam",
-    "DiaChi": "Hà Nội"
-}
-```
-
-### PUT - Cập nhật thương hiệu
-```
-PUT {{base_url}}/thuong-hieu/1
-Content-Type: application/json
-
-{
-    "TenThuongHieu": "Sanofi - Updated"
-}
-```
-
-### DELETE - Xóa thương hiệu
-```
-DELETE {{base_url}}/thuong-hieu/8
-```
-
----
-
-## 5. NƯỚC SẢN XUẤT
-
-### GET - Danh sách nước sản xuất
-```
-GET {{base_url}}/nuoc-san-xuat
-```
-
-### GET - Chi tiết
-```
-GET {{base_url}}/nuoc-san-xuat/1
-```
-
-### POST - Tạo mới
-```
-POST {{base_url}}/nuoc-san-xuat
-Content-Type: application/json
-
-{
-    "TenNuocSX": "Nhật Bản"
-}
-```
-
-### PUT - Cập nhật
-```
-PUT {{base_url}}/nuoc-san-xuat/1
-Content-Type: application/json
-
-{
-    "TenNuocSX": "Việt Nam - Updated"
-}
-```
-
-### DELETE - Xóa
-```
-DELETE {{base_url}}/nuoc-san-xuat/9
-```
-
----
-
-## 6. THÀNH PHẦN
-
-### GET - Danh sách thành phần
-```
-GET {{base_url}}/thanh-phan
-```
-
-### GET - Chi tiết
-```
-GET {{base_url}}/thanh-phan/1
-```
-
-### POST - Tạo mới (Admin)
-```
-POST {{base_url}}/thanh-phan
-Content-Type: application/json
-
-{
-    "TenThanhPhan": "Vitamin D",
-    "MoTa": "Vitamin D3"
-}
-```
-
-### PUT - Cập nhật (Admin)
-```
-PUT {{base_url}}/thanh-phan/1
-Content-Type: application/json
-
-{
-    "TenThanhPhan": "Paracetamol - Updated"
-}
-```
-
-### DELETE - Xóa (Admin)
-```
-DELETE {{base_url}}/thanh-phan/5
-```
-
----
-
-## 7. TÁC DỤNG PHỤ
-
-### GET - Danh sách tác dụng phụ
-```
-GET {{base_url}}/tac-dung-phu
-```
-
-### GET - Chi tiết
-```
-GET {{base_url}}/tac-dung-phu/1
-```
-
-### POST - Tạo mới (Admin)
-```
-POST {{base_url}}/tac-dung-phu
-Content-Type: application/json
-
-{
-    "TenTacDungPhu": "Chóng mặt",
-    "MoTa": "Cảm giác quay cuồng"
-}
-```
-
-### PUT - Cập nhật (Admin)
-```
-PUT {{base_url}}/tac-dung-phu/1
-Content-Type: application/json
-
-{
-    "TenTacDungPhu": "Buồn nôn - Updated"
-}
-```
-
-### DELETE - Xóa (Admin)
-```
-DELETE {{base_url}}/tac-dung-phu/5
-```
-
----
-
-## 8. ĐỐI TƯỢNG SỬ DỤNG
-
-### GET - Danh sách đối tượng
-```
-GET {{base_url}}/doi-tuong
-```
-
-### GET - Chi tiết
-```
-GET {{base_url}}/doi-tuong/1
-```
-
-### POST - Tạo mới (Admin)
-```
-POST {{base_url}}/doi-tuong
-Content-Type: application/json
-
-{
-    "TenDoiTuong": "Người cao tuổi",
-    "MoTa": "Trên 60 tuổi"
-}
-```
-
-### PUT - Cập nhật (Admin)
-```
-PUT {{base_url}}/doi-tuong/1
-Content-Type: application/json
-
-{
-    "TenDoiTuong": "Người lớn - Updated"
-}
-```
-
-### DELETE - Xóa (Admin)
-```
-DELETE {{base_url}}/doi-tuong/6
-```
-
----
-
-## 9. ĐƠN HÀNG (Cần đăng nhập)
-
-### GET - Danh sách đơn hàng
-```
-GET {{base_url}}/don-hang
-GET {{base_url}}/don-hang?page=1&limit=10
-```
-
-### GET - Chi tiết đơn hàng
-```
-GET {{base_url}}/don-hang/1
-```
-
-### POST - Tạo đơn hàng
-```
-POST {{base_url}}/don-hang
-Content-Type: application/json
-
-{
-    "DiaChiGiao": "123 Đường ABC, Quận 1, TP.HCM",
-    "GhiChu": "Giao giờ hành chính",
+### User - Đặt hàng
+```bash
+curl -X POST http://localhost:8080/api.php/don-hang \
+  -H "Content-Type: application/json" \
+  -d '{
+    "DiaChiGiao": "123 Nguyen Van Linh, Q7, HCM",
+    "GhiChu": "Giao buổi sáng",
     "items": [
-        {"MaThuoc": 10, "SoLuong": 2},
-        {"MaThuoc": 7, "SoLuong": 1}
+      {"MaThuoc": 1, "SoLuong": 2},
+      {"MaThuoc": 2, "SoLuong": 1}
     ]
-}
+  }'
 ```
 
-### PUT - Cập nhật trạng thái (Admin)
+### Admin - Xem tất cả đơn hàng
+```bash
+curl http://localhost:8080/api.php/don-hang
 ```
-PUT {{base_url}}/don-hang/1
-Content-Type: application/json
 
-{
-    "TrangThai": "Đang giao"
-}
+### Admin - Cập nhật trạng thái
+```bash
+curl -X PUT http://localhost:8080/api.php/don-hang/1 \
+  -H "Content-Type: application/json" \
+  -d '{"TrangThai": "Đang giao"}'
+```
+
+Các trạng thái: `Chờ xác nhận`, `Đang xử lý`, `Đang giao`, `Đã giao`, `Đã hủy`
+
+---
+
+## 👥 NGƯỜI DÙNG (Admin)
+
+```bash
+# Danh sách
+curl http://localhost:8080/api.php/nguoi-dung
+
+# Chi tiết
+curl http://localhost:8080/api.php/nguoi-dung/1
+
+# Cập nhật
+curl -X PUT http://localhost:8080/api.php/nguoi-dung/2 \
+  -H "Content-Type: application/json" \
+  -d '{"HoTen": "Nguyen Van Updated", "Email": "test@email.com"}'
+
+# Xóa (soft)
+curl -X DELETE http://localhost:8080/api.php/nguoi-dung/99
 ```
 
 ---
 
-## 10. NGƯỜI DÙNG (Admin only)
+## 📁 NHÓM THUỐC
 
-### GET - Danh sách người dùng
-```
-GET {{base_url}}/nguoi-dung
-GET {{base_url}}/users
-```
+```bash
+# GET
+curl http://localhost:8080/api.php/nhom-thuoc
+curl http://localhost:8080/api.php/nhom-thuoc/1
 
-### GET - Chi tiết người dùng
-```
-GET {{base_url}}/nguoi-dung/1
-```
+# POST (Admin)
+curl -X POST http://localhost:8080/api.php/nhom-thuoc \
+  -H "Content-Type: application/json" \
+  -d '{"TenNhomThuoc": "Nhóm Test", "MoTa": "Mô tả"}'
 
-### PUT - Cập nhật người dùng
-```
-PUT {{base_url}}/nguoi-dung/1
-Content-Type: application/json
+# PUT (Admin)
+curl -X PUT http://localhost:8080/api.php/nhom-thuoc/1 \
+  -H "Content-Type: application/json" \
+  -d '{"TenNhomThuoc": "Nhóm Updated"}'
 
-{
-    "HoTen": "Admin Updated",
-    "VaiTro": "Admin"
-}
-```
-
-### DELETE - Xóa người dùng
-```
-DELETE {{base_url}}/nguoi-dung/5
+# DELETE (Admin)
+curl -X DELETE http://localhost:8080/api.php/nhom-thuoc/99
 ```
 
 ---
 
-## 11. BÀI VIẾT
+## 🏷️ THƯƠNG HIỆU
 
-### GET - Danh sách bài viết
-```
-GET {{base_url}}/bai-viet
-GET {{base_url}}/bai-viet?page=1&limit=10
-```
+```bash
+# GET
+curl http://localhost:8080/api.php/thuong-hieu
+curl http://localhost:8080/api.php/thuong-hieu/1
 
-### GET - Chi tiết bài viết
-```
-GET {{base_url}}/bai-viet/1
-```
+# POST (Admin)
+curl -X POST http://localhost:8080/api.php/thuong-hieu \
+  -H "Content-Type: application/json" \
+  -d '{"TenThuongHieu": "Brand Test", "QuocGia": "Vietnam"}'
 
-### POST - Tạo bài viết (Admin)
-```
-POST {{base_url}}/bai-viet
-Content-Type: application/json
+# PUT (Admin)
+curl -X PUT http://localhost:8080/api.php/thuong-hieu/1 \
+  -H "Content-Type: application/json" \
+  -d '{"TenThuongHieu": "Brand Updated"}'
 
-{
-    "TieuDe": "Bài viết test API",
-    "NoiDung": "Nội dung chi tiết bài viết...",
-    "TacGia": "Admin"
-}
-```
-
-### PUT - Cập nhật bài viết (Admin)
-```
-PUT {{base_url}}/bai-viet/1
-Content-Type: application/json
-
-{
-    "TieuDe": "Bài viết đã cập nhật"
-}
-```
-
-### DELETE - Xóa bài viết (Admin)
-```
-DELETE {{base_url}}/bai-viet/3
+# DELETE (Admin)
+curl -X DELETE http://localhost:8080/api.php/thuong-hieu/99
 ```
 
 ---
 
-## 12. HOME - Trang chủ API
+## 🌍 NƯỚC SẢN XUẤT
 
-### GET - Dữ liệu trang chủ
-```
-GET {{base_url}}/home
-GET {{base_url}}/
-```
-
----
-
-## CURL Commands (Windows CMD)
-
-### GET
-```cmd
-curl -X GET "http://localhost:8080/api.php/thuoc"
-curl -X GET "http://localhost:8080/api.php/thuoc/10"
-curl -X GET "http://localhost:8080/api.php/nhom-thuoc"
-```
-
-### POST - Đăng nhập Admin
-```cmd
-curl -X POST "http://localhost:8080/api.php/auth/admin-login" -H "Content-Type: application/json" -d "{\"phone\":\"0795930020\",\"password\":\"admin123\"}"
-```
-
-### POST - Tạo thuốc
-```cmd
-curl -X POST "http://localhost:8080/api.php/thuoc" -H "Content-Type: application/json" -d "{\"TenThuoc\":\"Test\",\"GiaBan\":50000,\"MaNhomThuoc\":1}"
-```
-
-### PUT - Cập nhật
-```cmd
-curl -X PUT "http://localhost:8080/api.php/thuoc/10" -H "Content-Type: application/json" -d "{\"TenThuoc\":\"Updated\"}"
-```
-
-### DELETE - Xóa
-```cmd
-curl -X DELETE "http://localhost:8080/api.php/thuoc/10"
+```bash
+curl http://localhost:8080/api.php/nuoc-san-xuat
+curl -X POST http://localhost:8080/api.php/nuoc-san-xuat \
+  -H "Content-Type: application/json" -d '{"TenNuocSX": "Japan"}'
+curl -X PUT http://localhost:8080/api.php/nuoc-san-xuat/1 \
+  -H "Content-Type: application/json" -d '{"TenNuocSX": "Korea"}'
+curl -X DELETE http://localhost:8080/api.php/nuoc-san-xuat/99
 ```
 
 ---
 
-## Postman Environment Variables
+## 🧪 THÀNH PHẦN
 
-```json
-{
-    "base_url": "http://localhost:8080/api.php"
-}
+```bash
+curl http://localhost:8080/api.php/thanh-phan
+curl -X POST http://localhost:8080/api.php/thanh-phan \
+  -H "Content-Type: application/json" \
+  -d '{"TenThanhPhan": "Paracetamol", "MoTa": "Giảm đau, hạ sốt"}'
 ```
 
-## Notes
-- API trả về JSON với format: `{"success": true/false, "message": "...", "data": {...}}`
-- Các endpoint POST/PUT/DELETE cần đăng nhập Admin trước
-- Đơn hàng cần đăng nhập User
-- Pagination: `?page=1&limit=10`
+---
+
+## ⚠️ TÁC DỤNG PHỤ
+
+```bash
+curl http://localhost:8080/api.php/tac-dung-phu
+curl -X POST http://localhost:8080/api.php/tac-dung-phu \
+  -H "Content-Type: application/json" \
+  -d '{"TenTacDungPhu": "Buồn nôn", "MoTa": "Có thể gây buồn nôn"}'
+```
+
+---
+
+## 👶 ĐỐI TƯỢNG SỬ DỤNG
+
+```bash
+curl http://localhost:8080/api.php/doi-tuong
+curl -X POST http://localhost:8080/api.php/doi-tuong \
+  -H "Content-Type: application/json" \
+  -d '{"TenDoiTuong": "Trẻ em 6-12 tuổi", "MoTa": "Dành cho trẻ em"}'
+```
+
+---
+
+## 📰 BÀI VIẾT
+
+```bash
+curl http://localhost:8080/api.php/bai-viet
+curl http://localhost:8080/api.php/bai-viet/1
+curl -X POST http://localhost:8080/api.php/bai-viet \
+  -H "Content-Type: application/json" \
+  -d '{"TieuDe": "Bài viết Test", "NoiDung": "<p>Nội dung</p>", "TacGia": "Admin"}'
+```
+
+---
+
+## 🏠 TRANG CHỦ
+
+```bash
+curl http://localhost:8080/api.php/home
+```
+
+Trả về: `san_pham_moi`, `san_pham_khuyen_mai`, `nhom_thuoc`
+
+---
+
+## ⚠️ Lưu ý quan trọng
+
+1. **Session/Cookie**: API sử dụng session để xác thực. Trong Postman, bật "Cookies" để lưu session.
+
+2. **Thứ tự test**:
+   - Đăng nhập Admin trước khi test các API cần quyền Admin
+   - Đăng nhập User trước khi test đơn hàng của User
+
+3. **Khuyến mãi**: Sản phẩm chỉ hiển thị khuyến mãi khi:
+   - `PhanTramGiam > 0`
+   - `NgayBatDauKM <= NOW()` (hoặc NULL)
+   - `NgayKetThucKM >= NOW()` (hoặc NULL)
+
+4. **Soft Delete**: Thuốc và Người dùng sử dụng soft delete (IsActive = 0)

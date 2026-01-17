@@ -1,18 +1,27 @@
 {
   "info": {
-    "name": "Nhà Thuốc API",
-    "description": "RESTful API đầy đủ CRUD + Authentication\n\nBase: http://localhost/Ql_NhaThuoc_API/php/api.php\n\n📌 Test accounts:\n- User: 0123456789 / 123456\n- Admin: 0123456789 / admin123",
+    "name": "Nhà Thuốc API - Full CRUD",
+    "description": "RESTful API đầy đủ CRUD + Authentication\n\n🔗 Docker: http://localhost:8080/api.php\n🔗 XAMPP: http://localhost/Ql_NhaThuoc_API/php/api.php\n\n📌 Test accounts:\n- Admin: 0795930020 / admin123\n- User: 0123456789 / 123456",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    {"key": "api", "value": "http://localhost/Ql_NhaThuoc_API/php/api.php"}
+    {"key": "api", "value": "{{base_url}}/api.php"}
   ],
   "item": [
     {
-      "name": "🔐 Authentication",
+      "name": "🔐 AUTH - Xác thực",
       "item": [
         {
-          "name": "POST - Đăng nhập User",
+          "name": "1. Đăng nhập Admin",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"phone\": \"0795930020\",\n  \"password\": \"admin123\"\n}"},
+            "url": "{{api}}/auth/admin-login"
+          }
+        },
+        {
+          "name": "2. Đăng nhập User",
           "request": {
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
@@ -21,25 +30,16 @@
           }
         },
         {
-          "name": "POST - Đăng ký User",
+          "name": "3. Đăng ký User mới",
           "request": {
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": {"mode": "raw", "raw": "{\n  \"name\": \"Nguyen Van A\",\n  \"phone\": \"0987654321\",\n  \"password\": \"123456\"\n}"},
+            "body": {"mode": "raw", "raw": "{\n  \"name\": \"Nguyen Van Test\",\n  \"phone\": \"0987654321\",\n  \"password\": \"123456\"\n}"},
             "url": "{{api}}/auth/register"
           }
         },
         {
-          "name": "POST - Đăng nhập Admin",
-          "request": {
-            "method": "POST",
-            "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": {"mode": "raw", "raw": "{\n  \"phone\": \"0123456789\",\n  \"password\": \"admin123\"\n}"},
-            "url": "{{api}}/auth/admin-login"
-          }
-        },
-        {
-          "name": "POST - Gửi OTP",
+          "name": "4. Gửi OTP",
           "request": {
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
@@ -48,7 +48,7 @@
           }
         },
         {
-          "name": "POST - Xác nhận OTP",
+          "name": "5. Xác nhận OTP",
           "request": {
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
@@ -57,35 +57,53 @@
           }
         },
         {
-          "name": "GET - Thông tin tôi",
+          "name": "6. Thông tin tài khoản",
           "request": {"method": "GET", "url": "{{api}}/auth/me"}
         },
         {
-          "name": "POST - Đăng xuất",
+          "name": "7. Đăng xuất",
           "request": {"method": "POST", "url": "{{api}}/auth/logout"}
         }
       ]
     },
     {
-      "name": "📦 Thuốc (Public)",
+      "name": "🏠 HOME - Trang chủ",
+      "item": [
+        {
+          "name": "Dữ liệu trang chủ",
+          "request": {"method": "GET", "url": "{{api}}/home"}
+        }
+      ]
+    },
+    {
+      "name": "💊 THUỐC - Public",
       "item": [
         {"name": "GET - Danh sách", "request": {"method": "GET", "url": "{{api}}/thuoc"}},
         {"name": "GET - Phân trang", "request": {"method": "GET", "url": "{{api}}/thuoc?page=1&limit=5"}},
         {"name": "GET - Tìm kiếm", "request": {"method": "GET", "url": "{{api}}/thuoc?search=para"}},
         {"name": "GET - Lọc theo nhóm", "request": {"method": "GET", "url": "{{api}}/thuoc?nhom=1"}},
-        {"name": "GET - Chi tiết", "request": {"method": "GET", "url": "{{api}}/thuoc/1"}}
+        {"name": "GET - Chi tiết thuốc", "request": {"method": "GET", "url": "{{api}}/thuoc/1"}}
       ]
     },
     {
-      "name": "📦 Thuốc (Admin)",
-      "description": "⚠️ Yêu cầu đăng nhập Admin trước",
+      "name": "💊 THUỐC - Admin CRUD",
+      "description": "⚠️ Đăng nhập Admin trước khi test",
       "item": [
         {
           "name": "POST - Tạo thuốc mới",
           "request": {
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": {"mode": "raw", "raw": "{\n  \"TenThuoc\": \"Thuốc Test API\",\n  \"GiaBan\": 50000,\n  \"DonViTinh\": \"Hộp\",\n  \"MoTa\": \"Mô tả thuốc test\",\n  \"SoLuongTon\": 100,\n  \"MaNhomThuoc\": 1\n}"},
+            "body": {"mode": "raw", "raw": "{\n  \"TenThuoc\": \"Thuốc Test API\",\n  \"MoTa\": \"Mô tả thuốc test từ API\",\n  \"DonViTinh\": \"Hộp\",\n  \"GiaBan\": 50000,\n  \"GiaGoc\": 60000,\n  \"PhanTramGiam\": 20,\n  \"NgayBatDauKM\": \"2024-01-01\",\n  \"NgayKetThucKM\": \"2024-12-31\",\n  \"SoLuongTon\": 100,\n  \"MaNhomThuoc\": 1,\n  \"MaThuongHieu\": 1,\n  \"MaNuocSX\": 1,\n  \"IsNew\": 1,\n  \"IsHot\": 0\n}"},
+            "url": "{{api}}/thuoc"
+          }
+        },
+        {
+          "name": "POST - Tạo thuốc (tối thiểu)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"TenThuoc\": \"Thuốc Đơn Giản\",\n  \"GiaBan\": 25000\n}"},
             "url": "{{api}}/thuoc"
           }
         },
@@ -94,69 +112,116 @@
           "request": {
             "method": "PUT",
             "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": {"mode": "raw", "raw": "{\n  \"TenThuoc\": \"Thuốc Updated\",\n  \"GiaBan\": 55000\n}"},
+            "body": {"mode": "raw", "raw": "{\n  \"TenThuoc\": \"Thuốc Đã Cập Nhật\",\n  \"GiaBan\": 55000,\n  \"GiaGoc\": 70000,\n  \"PhanTramGiam\": 25,\n  \"NgayBatDauKM\": \"2024-06-01\",\n  \"NgayKetThucKM\": \"2024-06-30\",\n  \"IsHot\": 1\n}"},
             "url": "{{api}}/thuoc/1"
           }
         },
         {
-          "name": "DELETE - Xóa thuốc",
-          "request": {"method": "DELETE", "url": "{{api}}/thuoc/1"}
+          "name": "PUT - Xóa khuyến mãi",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"PhanTramGiam\": 0,\n  \"NgayBatDauKM\": null,\n  \"NgayKetThucKM\": null\n}"},
+            "url": "{{api}}/thuoc/1"
+          }
+        },
+        {
+          "name": "DELETE - Xóa thuốc (soft)",
+          "request": {"method": "DELETE", "url": "{{api}}/thuoc/99"}
         }
       ]
     },
     {
-      "name": "🛒 Đơn hàng (User)",
-      "description": "⚠️ Yêu cầu đăng nhập User",
+      "name": "🛒 ĐƠN HÀNG - User",
+      "description": "⚠️ Đăng nhập User trước khi test",
       "item": [
         {"name": "GET - Đơn hàng của tôi", "request": {"method": "GET", "url": "{{api}}/don-hang"}},
         {"name": "GET - Chi tiết đơn hàng", "request": {"method": "GET", "url": "{{api}}/don-hang/1"}},
         {
-          "name": "POST - Đặt hàng",
+          "name": "POST - Đặt hàng mới",
           "request": {
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": {"mode": "raw", "raw": "{\n  \"DiaChiGiao\": \"123 Nguyen Van Linh, Q7, HCM\",\n  \"GhiChu\": \"Giao buổi sáng\",\n  \"items\": [\n    {\"MaThuoc\": 1, \"SoLuong\": 2},\n    {\"MaThuoc\": 2, \"SoLuong\": 1}\n  ]\n}"},
+            "body": {"mode": "raw", "raw": "{\n  \"DiaChiGiao\": \"123 Nguyen Van Linh, Quan 7, TP.HCM\",\n  \"GhiChu\": \"Giao buổi sáng, gọi trước 30 phút\",\n  \"items\": [\n    {\"MaThuoc\": 1, \"SoLuong\": 2},\n    {\"MaThuoc\": 2, \"SoLuong\": 1}\n  ]\n}"},
             "url": "{{api}}/don-hang"
           }
         }
       ]
     },
     {
-      "name": "🛒 Đơn hàng (Admin)",
-      "description": "⚠️ Yêu cầu đăng nhập Admin",
+      "name": "🛒 ĐƠN HÀNG - Admin",
+      "description": "⚠️ Đăng nhập Admin trước khi test",
       "item": [
         {"name": "GET - Tất cả đơn hàng", "request": {"method": "GET", "url": "{{api}}/don-hang"}},
+        {"name": "GET - Phân trang", "request": {"method": "GET", "url": "{{api}}/don-hang?page=1&limit=10"}},
         {
-          "name": "PUT - Cập nhật trạng thái",
+          "name": "PUT - Cập nhật: Đang xử lý",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"TrangThai\": \"Đang xử lý\"\n}"},
+            "url": "{{api}}/don-hang/1"
+          }
+        },
+        {
+          "name": "PUT - Cập nhật: Đang giao",
           "request": {
             "method": "PUT",
             "header": [{"key": "Content-Type", "value": "application/json"}],
             "body": {"mode": "raw", "raw": "{\n  \"TrangThai\": \"Đang giao\"\n}"},
             "url": "{{api}}/don-hang/1"
           }
+        },
+        {
+          "name": "PUT - Cập nhật: Đã giao",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"TrangThai\": \"Đã giao\"\n}"},
+            "url": "{{api}}/don-hang/1"
+          }
+        },
+        {
+          "name": "PUT - Cập nhật: Đã hủy",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"TrangThai\": \"Đã hủy\"\n}"},
+            "url": "{{api}}/don-hang/1"
+          }
         }
       ]
     },
     {
-      "name": "👥 Người dùng (Admin)",
-      "description": "⚠️ Yêu cầu đăng nhập Admin",
+      "name": "👥 NGƯỜI DÙNG - Admin",
+      "description": "⚠️ Đăng nhập Admin trước khi test",
       "item": [
         {"name": "GET - Danh sách", "request": {"method": "GET", "url": "{{api}}/nguoi-dung"}},
+        {"name": "GET - Phân trang", "request": {"method": "GET", "url": "{{api}}/nguoi-dung?page=1&limit=10"}},
         {"name": "GET - Chi tiết", "request": {"method": "GET", "url": "{{api}}/nguoi-dung/1"}},
         {
-          "name": "PUT - Cập nhật",
+          "name": "PUT - Cập nhật thông tin",
           "request": {
             "method": "PUT",
             "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": {"mode": "raw", "raw": "{\n  \"HoTen\": \"Nguyen Van B\",\n  \"VaiTro\": \"User\"\n}"},
-            "url": "{{api}}/nguoi-dung/1"
+            "body": {"mode": "raw", "raw": "{\n  \"HoTen\": \"Nguyen Van Updated\",\n  \"Email\": \"test@email.com\",\n  \"DiaChi\": \"456 Le Van Viet, Q9, HCM\"\n}"},
+            "url": "{{api}}/nguoi-dung/2"
           }
         },
-        {"name": "DELETE - Xóa", "request": {"method": "DELETE", "url": "{{api}}/nguoi-dung/1"}}
+        {
+          "name": "PUT - Đổi vai trò",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"VaiTro\": \"Admin\"\n}"},
+            "url": "{{api}}/nguoi-dung/2"
+          }
+        },
+        {"name": "DELETE - Xóa (soft)", "request": {"method": "DELETE", "url": "{{api}}/nguoi-dung/99"}}
       ]
     },
     {
-      "name": "📁 Nhóm thuốc",
+      "name": "📁 NHÓM THUỐC",
       "item": [
         {"name": "GET - Danh sách", "request": {"method": "GET", "url": "{{api}}/nhom-thuoc"}},
         {"name": "GET - Chi tiết", "request": {"method": "GET", "url": "{{api}}/nhom-thuoc/1"}},
@@ -165,7 +230,7 @@
           "request": {
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": {"mode": "raw", "raw": "{\n  \"TenNhomThuoc\": \"Nhóm Test\",\n  \"MoTa\": \"Mô tả nhóm\"\n}"},
+            "body": {"mode": "raw", "raw": "{\n  \"TenNhomThuoc\": \"Nhóm Test API\",\n  \"MoTa\": \"Mô tả nhóm thuốc test\",\n  \"MaDanhMucCha\": null\n}"},
             "url": "{{api}}/nhom-thuoc"
           }
         },
@@ -174,15 +239,15 @@
           "request": {
             "method": "PUT",
             "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": {"mode": "raw", "raw": "{\n  \"TenNhomThuoc\": \"Nhóm Updated\"\n}"},
+            "body": {"mode": "raw", "raw": "{\n  \"TenNhomThuoc\": \"Nhóm Đã Cập Nhật\",\n  \"MoTa\": \"Mô tả mới\"\n}"},
             "url": "{{api}}/nhom-thuoc/1"
           }
         },
-        {"name": "DELETE - Xóa (Admin)", "request": {"method": "DELETE", "url": "{{api}}/nhom-thuoc/1"}}
+        {"name": "DELETE - Xóa (Admin)", "request": {"method": "DELETE", "url": "{{api}}/nhom-thuoc/99"}}
       ]
     },
     {
-      "name": "🏷️ Thương hiệu",
+      "name": "🏷️ THƯƠNG HIỆU",
       "item": [
         {"name": "GET - Danh sách", "request": {"method": "GET", "url": "{{api}}/thuong-hieu"}},
         {"name": "GET - Chi tiết", "request": {"method": "GET", "url": "{{api}}/thuong-hieu/1"}},
@@ -191,7 +256,7 @@
           "request": {
             "method": "POST",
             "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": {"mode": "raw", "raw": "{\n  \"TenThuongHieu\": \"Brand Test\",\n  \"QuocGia\": \"Vietnam\"\n}"},
+            "body": {"mode": "raw", "raw": "{\n  \"TenThuongHieu\": \"Brand Test API\",\n  \"QuocGia\": \"Vietnam\",\n  \"DiaChi\": \"123 ABC Street\",\n  \"HinhAnh\": \"https://example.com/logo.png\"\n}"},
             "url": "{{api}}/thuong-hieu"
           }
         },
@@ -200,15 +265,15 @@
           "request": {
             "method": "PUT",
             "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": {"mode": "raw", "raw": "{\n  \"TenThuongHieu\": \"Brand Updated\"\n}"},
+            "body": {"mode": "raw", "raw": "{\n  \"TenThuongHieu\": \"Brand Updated\",\n  \"QuocGia\": \"USA\"\n}"},
             "url": "{{api}}/thuong-hieu/1"
           }
         },
-        {"name": "DELETE - Xóa (Admin)", "request": {"method": "DELETE", "url": "{{api}}/thuong-hieu/1"}}
+        {"name": "DELETE - Xóa (Admin)", "request": {"method": "DELETE", "url": "{{api}}/thuong-hieu/99"}}
       ]
     },
     {
-      "name": "🌍 Nước sản xuất",
+      "name": "🌍 NƯỚC SẢN XUẤT",
       "item": [
         {"name": "GET - Danh sách", "request": {"method": "GET", "url": "{{api}}/nuoc-san-xuat"}},
         {"name": "GET - Chi tiết", "request": {"method": "GET", "url": "{{api}}/nuoc-san-xuat/1"}},
@@ -226,17 +291,116 @@
           "request": {
             "method": "PUT",
             "header": [{"key": "Content-Type", "value": "application/json"}],
-            "body": {"mode": "raw", "raw": "{\n  \"TenNuocSX\": \"Korea\"\n}"},
+            "body": {"mode": "raw", "raw": "{\n  \"TenNuocSX\": \"South Korea\"\n}"},
             "url": "{{api}}/nuoc-san-xuat/1"
           }
         },
-        {"name": "DELETE - Xóa (Admin)", "request": {"method": "DELETE", "url": "{{api}}/nuoc-san-xuat/1"}}
+        {"name": "DELETE - Xóa (Admin)", "request": {"method": "DELETE", "url": "{{api}}/nuoc-san-xuat/99"}}
       ]
     },
     {
-      "name": "🏠 Trang chủ",
+      "name": "🧪 THÀNH PHẦN",
       "item": [
-        {"name": "GET - Dữ liệu trang chủ", "request": {"method": "GET", "url": "{{api}}/home"}}
+        {"name": "GET - Danh sách", "request": {"method": "GET", "url": "{{api}}/thanh-phan"}},
+        {"name": "GET - Chi tiết", "request": {"method": "GET", "url": "{{api}}/thanh-phan/1"}},
+        {
+          "name": "POST - Tạo mới (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"TenThanhPhan\": \"Paracetamol\",\n  \"MoTa\": \"Hoạt chất giảm đau, hạ sốt\"\n}"},
+            "url": "{{api}}/thanh-phan"
+          }
+        },
+        {
+          "name": "PUT - Cập nhật (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"TenThanhPhan\": \"Paracetamol 500mg\",\n  \"MoTa\": \"Cập nhật mô tả\"\n}"},
+            "url": "{{api}}/thanh-phan/1"
+          }
+        },
+        {"name": "DELETE - Xóa (Admin)", "request": {"method": "DELETE", "url": "{{api}}/thanh-phan/99"}}
+      ]
+    },
+    {
+      "name": "⚠️ TÁC DỤNG PHỤ",
+      "item": [
+        {"name": "GET - Danh sách", "request": {"method": "GET", "url": "{{api}}/tac-dung-phu"}},
+        {"name": "GET - Chi tiết", "request": {"method": "GET", "url": "{{api}}/tac-dung-phu/1"}},
+        {
+          "name": "POST - Tạo mới (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"TenTacDungPhu\": \"Buồn nôn\",\n  \"MoTa\": \"Có thể gây buồn nôn khi dùng lúc đói\"\n}"},
+            "url": "{{api}}/tac-dung-phu"
+          }
+        },
+        {
+          "name": "PUT - Cập nhật (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"TenTacDungPhu\": \"Buồn nôn nhẹ\",\n  \"MoTa\": \"Cập nhật mô tả\"\n}"},
+            "url": "{{api}}/tac-dung-phu/1"
+          }
+        },
+        {"name": "DELETE - Xóa (Admin)", "request": {"method": "DELETE", "url": "{{api}}/tac-dung-phu/99"}}
+      ]
+    },
+    {
+      "name": "👶 ĐỐI TƯỢNG SỬ DỤNG",
+      "item": [
+        {"name": "GET - Danh sách", "request": {"method": "GET", "url": "{{api}}/doi-tuong"}},
+        {"name": "GET - Chi tiết", "request": {"method": "GET", "url": "{{api}}/doi-tuong/1"}},
+        {
+          "name": "POST - Tạo mới (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"TenDoiTuong\": \"Trẻ em 6-12 tuổi\",\n  \"MoTa\": \"Dành cho trẻ em từ 6 đến 12 tuổi\"\n}"},
+            "url": "{{api}}/doi-tuong"
+          }
+        },
+        {
+          "name": "PUT - Cập nhật (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"TenDoiTuong\": \"Trẻ em 6-12 tuổi (cập nhật)\",\n  \"MoTa\": \"Mô tả mới\"\n}"},
+            "url": "{{api}}/doi-tuong/1"
+          }
+        },
+        {"name": "DELETE - Xóa (Admin)", "request": {"method": "DELETE", "url": "{{api}}/doi-tuong/99"}}
+      ]
+    },
+    {
+      "name": "📰 BÀI VIẾT",
+      "item": [
+        {"name": "GET - Danh sách", "request": {"method": "GET", "url": "{{api}}/bai-viet"}},
+        {"name": "GET - Phân trang", "request": {"method": "GET", "url": "{{api}}/bai-viet?page=1&limit=5"}},
+        {"name": "GET - Chi tiết", "request": {"method": "GET", "url": "{{api}}/bai-viet/1"}},
+        {
+          "name": "POST - Tạo mới (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"TieuDe\": \"Bài viết Test API\",\n  \"NoiDung\": \"<p>Nội dung bài viết test từ API</p>\",\n  \"TacGia\": \"Admin\",\n  \"HinhAnh\": \"https://example.com/image.jpg\"\n}"},
+            "url": "{{api}}/bai-viet"
+          }
+        },
+        {
+          "name": "PUT - Cập nhật (Admin)",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\n  \"TieuDe\": \"Bài viết Đã Cập Nhật\",\n  \"NoiDung\": \"<p>Nội dung mới</p>\"\n}"},
+            "url": "{{api}}/bai-viet/1"
+          }
+        },
+        {"name": "DELETE - Xóa (Admin)", "request": {"method": "DELETE", "url": "{{api}}/bai-viet/99"}}
       ]
     }
   ]

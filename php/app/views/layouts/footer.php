@@ -70,6 +70,11 @@
     </div>
 </footer>
 
+<!-- Back to Top Button -->
+<button id="backToTop" class="back-to-top" title="Quay lại đầu trang">
+    <i class="fas fa-chevron-up"></i>
+</button>
+
 <style>
 .footer-links a:hover {
     color: #1a8ccc !important;
@@ -77,4 +82,74 @@
 .social-links a:hover {
     color: #1a8ccc !important;
 }
+
+/* Back to Top Button */
+.back-to-top {
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1a8ccc, #0d6efd);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    z-index: 997;
+    box-shadow: 0 4px 15px rgba(26, 140, 204, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.back-to-top:hover {
+    background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+    transform: translateY(-5px);
+    box-shadow: 0 6px 25px rgba(13, 110, 253, 0.5);
+}
+
+@media (max-width: 768px) {
+    .back-to-top {
+        bottom: 90px;
+        right: 15px;
+        width: 45px;
+        height: 45px;
+        font-size: 16px;
+    }
+}
 </style>
+
+<script>
+// Back to Top Button
+(function() {
+    const backToTop = document.getElementById('backToTop');
+    
+    // Show/hide button on scroll
+    window.addEventListener('scroll', function() {
+        if (window.pageYOffset > 300) {
+            backToTop.classList.add('show');
+        } else {
+            backToTop.classList.remove('show');
+        }
+    });
+    
+    // Scroll to top on click
+    backToTop.addEventListener('click', function() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+})();
+</script>

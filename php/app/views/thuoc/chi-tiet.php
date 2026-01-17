@@ -8,7 +8,8 @@ $dangKhuyenMai = $phanTramGiam > 0
     && (empty($thuoc['NgayBatDauKM']) || $thuoc['NgayBatDauKM'] <= $now)
     && (empty($thuoc['NgayKetThucKM']) || $thuoc['NgayKetThucKM'] >= $now);
 $giaGoc = $thuoc['GiaGoc'] ?? $thuoc['GiaBan'] ?? 0;
-$giaBan = $dangKhuyenMai ? ($giaGoc * (100 - $phanTramGiam) / 100) : ($thuoc['GiaBan'] ?? 0);
+// Nếu đang KM: tính giá giảm từ GiaGoc. Nếu hết KM: trả về GiaGoc (giá gốc trước KM)
+$giaBan = $dangKhuyenMai ? ($giaGoc * (100 - $phanTramGiam) / 100) : $giaGoc;
 $hetHang = ($thuoc['SoLuongTon'] ?? 0) <= 0;
 $ngungKinhDoanh = !($thuoc['IsActive'] ?? true);
 $khongTheMua = $ngungKinhDoanh || $hetHang;
@@ -57,7 +58,7 @@ $khongTheMua = $ngungKinhDoanh || $hetHang;
                 <?php elseif ($hetHang): ?>
                     <span class="badge bg-secondary">Hết hàng</span>
                 <?php else: ?>
-                    <?php if ($phanTramGiam > 0): ?>
+                    <?php if ($dangKhuyenMai): ?>
                         <span class="badge bg-danger">Giảm <?= $phanTramGiam ?>%</span>
                     <?php endif; ?>
                     <?php if ($thuoc['IsHot'] ?? false): ?>
@@ -72,7 +73,7 @@ $khongTheMua = $ngungKinhDoanh || $hetHang;
             <!-- Giá -->
             <div class="product-price mb-3">
                 <span class="h3 text-danger fw-bold"><?= number_format($giaBan, 0, ',', '.') ?>đ</span>
-                <?php if ($phanTramGiam > 0 && $giaGoc > $giaBan): ?>
+                <?php if ($dangKhuyenMai && $giaGoc > $giaBan): ?>
                     <span class="text-muted text-decoration-line-through ms-2"><?= number_format($giaGoc, 0, ',', '.') ?>đ</span>
                 <?php endif; ?>
             </div>
